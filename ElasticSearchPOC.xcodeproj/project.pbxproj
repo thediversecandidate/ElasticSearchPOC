@@ -43,8 +43,6 @@
 		B52B652D248D65E700419626 = {
 			isa = PBXGroup;
 			children = (
-				B52B654C248D6AC900419626 /* SearchResult.swift */,
-				B52B654E248D6AED00419626 /* Server.swift */,
 				B52B6538248D65E700419626 /* ElasticSearchPOC */,
 				B52B6537248D65E700419626 /* Products */,
 			);
@@ -61,6 +59,8 @@
 		B52B6538248D65E700419626 /* ElasticSearchPOC */ = {
 			isa = PBXGroup;
 			children = (
+				B52B654C248D6AC900419626 /* SearchResult.swift */,
+				B52B654E248D6AED00419626 /* Server.swift */,
 				B52B6539248D65E700419626 /* AppDelegate.swift */,
 				B52B653B248D65E700419626 /* ContentView.swift */,
 				B52B653D248D65E900419626 /* Assets.xcassets */,
