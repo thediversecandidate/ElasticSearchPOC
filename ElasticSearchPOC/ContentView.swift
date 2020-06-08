@@ -15,6 +15,7 @@ struct ContentView: View {
 	@State var selectedIndex: Int?
 	@State var searchText = ""
 	@State var lastSearchText = ""
+	@State var searchInProgress = false
 
 	var body: some View {
 		VStack() {
@@ -50,6 +51,7 @@ struct ContentView: View {
 						}
 							.buttonStyle(BorderlessButtonStyle())
 					}
+					if searchInProgress { HStack() { Text("Searching…") }.frame(maxWidth: .infinity) }
 				}
 			}
 				.padding()
@@ -63,6 +65,7 @@ struct ContentView: View {
 	
 	func performSearch() {
 		lastSearchText = searchText
+		self.searchInProgress = true
 		self.publisher = Server.instance.search(for: self.searchText)
 			.map { $0.data }
 			.decode(type: [SearchResult].self, decoder: JSONDecoder())
@@ -71,10 +74,13 @@ struct ContentView: View {
 			.receive(on: DispatchQueue.main)
 			.sink(receiveCompletion: { completion in
 				switch completion {
-				case .failure(let err): print("Received Error: \(err)")
+				case .failure(let err):
+					self.searchInProgress = false
+					print("Received Error: \(err)")
 				default: break
 				}
 			}, receiveValue: { results in
+				self.searchInProgress = false
 				self.results = results
 			})
 	}
