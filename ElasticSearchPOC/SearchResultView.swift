@@ -29,10 +29,12 @@ struct SearchResultView: View {
 					Text(result.title)
 						.font(.title)
 						.lineLimit(2)
+						.foregroundColor(.black)
 					
 					Text(result.body)
 						.font(.body)
 						.lineLimit(5)
+						.foregroundColor(.black)
 				}
 					.padding()
 			}
