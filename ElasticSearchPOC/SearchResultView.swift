@@ -31,10 +31,21 @@ struct SearchResultView: View {
 						.lineLimit(2)
 						.foregroundColor(.black)
 					
-					Text(result.body)
+					Text(result.article_summary.isEmpty ? result.body : result.article_summary)
 						.font(.body)
 						.lineLimit(5)
 						.foregroundColor(.black)
+					
+					if !result.list_of_keywords.isEmpty {
+						HStack() {
+							Text(result.list_of_keywords)
+								.font(.caption).fontWeight(.semibold)
+								.lineLimit(1)
+								.foregroundColor(Color(white: 0.3))
+							Spacer()
+						}
+						.padding(.top, 5)
+					}
 				}
 					.padding()
 			}
