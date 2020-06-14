@@ -76,7 +76,7 @@ struct SearchView: View {
 						.frame(maxWidth: .infinity, maxHeight: .infinity)
 						
 						.onAppear() {
-							self.searchText = "Pandemic"
+						//	self.searchText = "Pandemic"
 							self.performSearch()
 						}
 				}
