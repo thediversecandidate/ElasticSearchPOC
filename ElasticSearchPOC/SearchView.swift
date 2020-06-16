@@ -17,6 +17,7 @@ struct SearchView: View {
 	@State var lastSearchText = ""
 	@State var searchInProgress = false
 	@State var selectedURL: URL?
+	@State var maxResultCount = 10
 
 	var cardSize = CGSize(width: 300, height: 200)
 	func across(in geo: GeometryProxy) -> Int {
@@ -55,6 +56,9 @@ struct SearchView: View {
 						if searchText != lastSearchText {
 							Button(action: { self.performSearch() }) { Text("Search") }
 						}
+						
+						Stepper("Limit", value: $maxResultCount)
+						Text("Limit: \(maxResultCount)")
 					}
 					.padding()
 					
@@ -87,7 +91,7 @@ struct SearchView: View {
 	func performSearch() {
 		lastSearchText = searchText
 		self.searchInProgress = true
-		self.publisher = Server.instance.search(for: self.searchText)
+		self.publisher = Server.instance.search(for: self.searchText, maxResultCount: self.maxResultCount)
 			.map { $0.data }
 			.decode(type: [SearchResult].self, decoder: JSONDecoder())
 			.replaceError(with: [])

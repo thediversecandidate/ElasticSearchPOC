@@ -14,9 +14,9 @@ class Server {
 	let url = URL(string: "http://34.234.193.247")!
 	let session = URLSession.shared
 	
-	func search(for string: String) -> URLSession.DataTaskPublisher {
+	func search(for string: String, maxResultCount: Int) -> URLSession.DataTaskPublisher {
 		
-		let url = self.url.appendingPathComponent("/articles/search/\(string)/10000")
+		let url = self.url.appendingPathComponent("/articles/search/\(string)/\(maxResultCount)")
 		var request = URLRequest(url: url)
 		
 		request.addValue("application/json", forHTTPHeaderField: "Accept")
