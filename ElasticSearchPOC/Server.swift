@@ -16,7 +16,7 @@ class Server {
 	
 	func search(for string: String) -> URLSession.DataTaskPublisher {
 		
-		let url = self.url.appendingPathComponent("/articles/search/\(string)")
+		let url = self.url.appendingPathComponent("/articles/search/\(string)/10000")
 		var request = URLRequest(url: url)
 		
 		request.addValue("application/json", forHTTPHeaderField: "Accept")
