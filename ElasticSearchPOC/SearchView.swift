@@ -57,8 +57,12 @@ struct SearchView: View {
 							Button(action: { self.performSearch() }) { Text("Search") }
 						}
 						
-						Stepper("Limit", value: $maxResultCount)
-						Text("Limit: \(maxResultCount)")
+						HStack() {
+							Text("Limit")
+							NumericField("", number: $maxResultCount)
+							Stepper("", value: $maxResultCount)
+						}
+							.frame(width: 150)
 					}
 					.padding()
 					
