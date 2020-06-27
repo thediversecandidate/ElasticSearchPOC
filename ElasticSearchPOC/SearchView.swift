@@ -21,7 +21,7 @@ struct SearchView: View {
 
 	var cardSize = CGSize(width: 300, height: 200)
 	func across(in geo: GeometryProxy) -> Int {
-		Int(geo.size.width / cardSize.width)
+		max(1, Int(geo.size.width / cardSize.width))
 	}
 	func firstRowIndices(in geo: GeometryProxy) -> [Int] {
 		let across = self.across(in: geo)
