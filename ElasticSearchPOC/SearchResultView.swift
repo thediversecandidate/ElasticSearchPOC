@@ -55,3 +55,13 @@ struct SearchResultView: View {
 	}
 	
 }
+
+struct SearchResultView_Previews: PreviewProvider {
+	static var previews: some View {
+		SearchResultView(selectedURL: .constant(nil), result: .sample)
+	}
+}
+
+extension SearchResult {
+	static let sample = SearchResult(url: URL(string: "https://cnn.com")!, title: "Title", body: "Body", article_summary: "Summary", list_of_keywords: "keywwords")
+}
