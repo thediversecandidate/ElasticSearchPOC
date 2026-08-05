@@ -18,6 +18,7 @@ struct SearchView: View {
 	@State var searchInProgress = false
 	@State var selectedURL: URL?
 	@State var maxResultCount = 10
+	@State var errorMessage: String?
 
 	var cardSize = CGSize(width: 300, height: 200)
 	func across(in geo: GeometryProxy) -> Int {
@@ -77,6 +78,9 @@ struct SearchView: View {
 									}
 								}
 								if self.searchInProgress { HStack() { Text("Searching…") }.frame(maxWidth: .infinity) }
+								if let errorMessage = self.errorMessage {
+									HStack() { Text("Search failed: \(errorMessage)").foregroundColor(.red) }.frame(maxWidth: .infinity)
+								}
 							}
 						}
 					}
@@ -95,21 +99,18 @@ struct SearchView: View {
 	func performSearch() {
 		lastSearchText = searchText
 		self.searchInProgress = true
+		self.errorMessage = nil
 		self.publisher = Server.instance.search(for: self.searchText, maxResultCount: self.maxResultCount)
 			.map { $0.data }
 			.decode(type: [SearchResult].self, decoder: JSONDecoder())
-			.replaceError(with: [])
-			.eraseToAnyPublisher()
 			.receive(on: DispatchQueue.main)
 			.sink(receiveCompletion: { completion in
-				switch completion {
-				case .failure(let err):
-					self.searchInProgress = false
+				self.searchInProgress = false
+				if case .failure(let err) = completion {
+					self.errorMessage = err.localizedDescription
 					print("Received Error: \(err)")
-				default: break
 				}
 			}, receiveValue: { results in
-				self.searchInProgress = false
 				self.results = results
 			})
 	}

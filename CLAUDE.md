@@ -28,7 +28,9 @@ Django-admin action.
 
 ## What this is
 
-A SwiftUI iOS/macOS proof-of-concept client for the `Webscraping` repo's
+A SwiftUI **macOS** (not iOS — `WebView.swift` is `NSViewRepresentable`,
+`Info.plist`'s `NSPrincipalClass` is `NSApplication`; there's no UIKit
+anywhere in this repo) proof-of-concept client for the `Webscraping` repo's
 Django API — a search box + card grid of results, with an in-app `WebView`
 to open an article without leaving the app. README describes it plainly:
 "Creating a FrontEnd for our webscraper!"
@@ -46,11 +48,16 @@ to open an article without leaving the app. README describes it plainly:
   if that API's response shape changes.
 - `ElasticSearchPOC/SearchView.swift` — the main SwiftUI view: search field,
   result-count stepper, a card grid computed from available width, and a
-  Combine pipeline (`performSearch()`) that decodes results and swallows
-  errors into an empty list (`.replaceError(with: [])`) rather than
-  surfacing them to the UI — worth tightening if error visibility matters.
+  Combine pipeline (`performSearch()`) that decodes results and surfaces
+  failures via `errorMessage` (a red "Search failed: ..." line under the
+  results). Previously used `.replaceError(with: [])`, which silently
+  turned every search failure into an indistinguishable empty-results
+  state — and made the `sink` closure's `.failure` case permanently
+  unreachable dead code, since `replaceError` guarantees the completion is
+  always `.finished`. Fixed by removing `replaceError` and handling
+  `.failure` in `receiveCompletion` for real.
 - `ElasticSearchPOC/SearchResultView.swift` — one result card.
-- `ElasticSearchPOC/WebView.swift` — `UIViewRepresentable`/`WKWebView`
+- `ElasticSearchPOC/WebView.swift` — `NSViewRepresentable`/`WKWebView`
   wrapper used for the in-app article reader.
 - `NumericField.swift` — a reusable numeric text field used for the
   "Limit" stepper input.
@@ -58,4 +65,9 @@ to open an article without leaving the app. README describes it plainly:
 ## Building
 
 Standard Xcode project (`ElasticSearchPOC.xcodeproj`) — open and run/build
-from Xcode; there's no CLI build script or test target in this repo.
+from Xcode; there's no CLI build script or test target in this repo. **No
+Xcode/Swift toolchain was available in the environment this file's fixes
+were made in** (Linux sandbox, no `swift`/`xcodebuild`), so the
+`Secrets.swift` and `SearchView.swift` changes were verified by careful
+reading only, not by an actual build — build and smoke-test in Xcode before
+trusting them in a release.
