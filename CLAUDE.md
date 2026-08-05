@@ -4,16 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## SECURITY WARNING — read before touching anything
 
-`ElasticSearchPOC/Server.swift` has a hardcoded `Authorization: Token ...`
-value and a hardcoded server IP. **This repository is public, and this is
-the same API token that's also hardcoded in the `Webscraping` repo's
-`django/derrick/README.MD`/`settings.py`** — it's been committed to
-plaintext in at least two public repos, which makes rotating it more
-urgent, not less. Do not copy this token into any new file, and if asked to
-work on auth here, move it to a build setting / secrets mechanism (e.g. an
-Xcode `.xcconfig` not checked in, or a keychain-backed value at runtime)
-rather than another hardcoded string, and flag to the user that the
-existing token needs rotating server-side.
+`ElasticSearchPOC/Server.swift` previously had a hardcoded
+`Authorization: Token ...` value and a hardcoded server IP — the same
+token that was also hardcoded in the `Webscraping` repo. **This repository
+is public**, so that token must be treated as permanently compromised even
+now that the code no longer contains it literally.
+
+### Secrets remediation status
+
+Code fixed: `Server.swift` now reads `Secrets.apiBaseURL` /
+`Secrets.apiToken` instead of hardcoded literals. `Secrets.swift` is
+gitignored — copy `ElasticSearchPOC/Secrets.swift.example` to
+`ElasticSearchPOC/Secrets.swift` (same directory) and fill in a real token
+to build/run locally; do not commit that file. You'll also need to add
+`Secrets.swift` to the Xcode target manually the first time (drag it into
+the `ElasticSearchPOC` group in Xcode) since the gitignored file isn't
+referenced in the checked-in `.xcodeproj`.
+
+**Still needs action outside this repo:** the actual token value needs
+rotating server-side (see the `Webscraping` repo's CLAUDE.md — same token,
+same fix needed there). Nothing in this repo can rotate it; that's a
+Django-admin action.
 
 ## What this is
 
@@ -26,8 +37,8 @@ to open an article without leaving the app. README describes it plainly:
 
 - `ElasticSearchPOC/Server.swift` — the only networking code: one
   `search(for:maxResultCount:)` call to `/articles/search/<query>/<max>` on
-  the (hardcoded-IP) Django backend, returning a Combine
-  `DataTaskPublisher`.
+  the Django backend (base URL/token from `Secrets.swift`), returning a
+  Combine `DataTaskPublisher`.
 - `ElasticSearchPOC/SearchResult.swift` — `Codable` model matching the
   Django API's article JSON shape (`url`, `title`, `body`,
   `article_summary`, `list_of_keywords`) — keep this in sync with the
